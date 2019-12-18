@@ -19,9 +19,12 @@ IMUSensor::IMUSensor(const uint8_t sda, const uint8_t scl, const scales accelera
 
 bool IMUSensor::begin()
 {
+    bool result = _mpu.init();
+    
     _mpu.set_acc_scale(_accelerometer_scale);
     _mpu.set_gyro_scale(_gyroscope_scale);
-    return _mpu.init();
+    
+    return result;
 }
 
 Axis<int16_t> IMUSensor::get_accelerometer_readings()

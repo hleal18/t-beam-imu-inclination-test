@@ -2,8 +2,8 @@
 #include "IMUSensor/IMUSensor.h"
 
 IMUSensor imu(SDA, SCL, scale_16g, scale_500dps, 0.06);
-float angle_pitch;
-float angle_roll;
+float angle_pitch = 0;
+float angle_roll = 0;
 
 double angle_pitch_acc;
 double angle_roll_acc;
@@ -26,9 +26,9 @@ void loop()
     // put your main code here, to run repeatedly:
     Axis<int16_t> rotation_rate = imu.get_gyroscope_readings();
     Axis<int16_t> accel = imu.get_accelerometer_readings();
-    Serial.println(accel.x);
-    Axis<double> acceleration = imu.get_acceleration();
     
+    Axis<double> acceleration = imu.get_acceleration();
+    //Serial.println(acceleration.z);
     
     
     //Serial.println(rotation_rate.x);
@@ -42,14 +42,14 @@ void loop()
     
     //Serial.print("pitch, x: "); Serial.print(angle_pitch); Serial.print(" roll, y: "); Serial.println(angle_roll);
     
-    angle_pitch += angle_roll * sin(rotation_rate.z * 0.000000532);
-    angle_roll -= angle_pitch * sin(rotation_rate.z * 0.000000532);
+    angle_pitch += angle_roll * sin(rotation_rate.z * 0.000001066);
+    angle_roll -= angle_pitch * sin(rotation_rate.z * 0.000001066);
     
-    // //Serial.print("pitch, x: "); Serial.print(angle_pitch); Serial.print(" roll, y: "); Serial.println(angle_roll);
+    Serial.print("pitch, x: "); Serial.print(angle_pitch); Serial.print(" roll, y: "); Serial.println(angle_roll);
     
     acc_total_vector = sqrt((acceleration.x*acceleration.x)+(acceleration.y*acceleration.y)+(acceleration.z*acceleration.z));
     
-    angle_pitch_acc = (asin(acceleration.y / acc_total_vector) == NAN ? 90 : asin(acceleration.y/acc_total_vector))*57.296;
+    angle_pitch_acc = (asin(acceleration.y / acc_total_vector) ? asin(acceleration.y/acc_total_vector) : 90.0)*57.296;
     angle_roll_acc = asin(acceleration.x/acc_total_vector)* -57.296;
     
     //Serial.print("pitch, x: "); Serial.print(angle_pitch_acc); Serial.print(" roll, y: "); Serial.println(angle_roll_acc);
